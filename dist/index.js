@@ -1,45 +1,39 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateShadesForBaseColor = exports.shadeValues = void 0;
-const chroma_js_1 = __importDefault(require("chroma-js"));
-exports.shadeValues = [
+import chroma from "chroma-js";
+export const shadeValues = [
     50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950,
 ];
-const generateShadesForBaseColor = (baseColor, desiredShades = exports.shadeValues, outputFormat = "hex") => {
-    const lightestShade = (0, chroma_js_1.default)(baseColor instanceof Array ? baseColor.join(",") : baseColor).brighten(3.04);
-    const darkestShade = (0, chroma_js_1.default)(baseColor instanceof Array ? baseColor.join(",") : baseColor).darken(2.8);
+export const generateShadesForBaseColor = (baseColor, desiredShades = shadeValues, outputFormat = "hex") => {
+    const lightestShade = chroma(baseColor instanceof Array ? baseColor.join(",") : baseColor).brighten(3.04);
+    const darkestShade = chroma(baseColor instanceof Array ? baseColor.join(",") : baseColor).darken(2.8);
     // Generate the full spectrum of shades
-    const fullSpectrum = chroma_js_1.default
+    const fullSpectrum = chroma
         .scale([
         lightestShade.hex(),
         baseColor instanceof Array ? baseColor.join(",") : baseColor,
         darkestShade.hex(),
     ])
-        .colors(exports.shadeValues.length);
+        .colors(shadeValues.length);
     const fullMappedShades = {};
-    exports.shadeValues.forEach((shadeValue, i) => {
+    shadeValues.forEach((shadeValue, i) => {
         let color;
         switch (outputFormat) {
             case "hex":
-                color = (0, chroma_js_1.default)(fullSpectrum[i]).hex();
+                color = chroma(fullSpectrum[i]).hex();
                 break;
             case "rgb":
-                color = (0, chroma_js_1.default)(fullSpectrum[i]).css();
+                color = chroma(fullSpectrum[i]).css();
                 break;
             case "hsl":
-                color = (0, chroma_js_1.default)(fullSpectrum[i]).css("hsl");
+                color = chroma(fullSpectrum[i]).css("hsl");
                 break;
             case "name":
-                color = (0, chroma_js_1.default)(fullSpectrum[i]).name();
+                color = chroma(fullSpectrum[i]).name();
                 break;
             case "css":
-                color = (0, chroma_js_1.default)(fullSpectrum[i]).css();
+                color = chroma(fullSpectrum[i]).css();
                 break;
             default:
-                color = (0, chroma_js_1.default)(fullSpectrum[i]).hex();
+                color = chroma(fullSpectrum[i]).hex();
         }
         fullMappedShades[shadeValue] = color;
     });
@@ -50,7 +44,6 @@ const generateShadesForBaseColor = (baseColor, desiredShades = exports.shadeValu
     });
     return filteredMappedShades;
 };
-exports.generateShadesForBaseColor = generateShadesForBaseColor;
 // Usage
 // For the full range
 // const fullShades = generateShadesForBaseColor("#ff0000");
